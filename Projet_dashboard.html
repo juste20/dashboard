@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard</title>
+    <link rel="stylesheet" href="Projet_dashboard.css">
+</head>
+<body>
+    <!-- Sidebar -->
+    <div class="sidebar">
+        <div class="logo-container">
+            <div class="logo">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                </svg>
+                <span>LOGO</span>
+            </div>
+        </div>
+        <div class="menu">
+            <a href="#" class="menu-item active" data-page="dashboard">Dashboard</a>
+            <a href="#" class="menu-item" data-page="employers">Employers</a>
+            <a href="#" class="menu-item" data-page="products">Products</a>
+        </div>
+    </div>
+    
+    <!-- Main Content -->
+    <div class="main-content">
+        <!-- Header -->
+        <div class="header">
+            <div></div>
+            <div id="auth-buttons" class="auth-buttons">
+                <button class="btn btn-outline" id="login-btn">Login</button>
+                <button class="btn btn-primary" id="register-btn">Register</button>
+            </div>
+            <div id="user-info" class="user-avatar" style="display: none;">
+                <div class="user-name" id="user-name">John Doe</div>
+                <div class="avatar">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="#1a73e8" width="40" height="40">
+                        <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 3c1.66 0 3 1.34 3 3s-1.34 3-3 3-3-1.34-3-3 1.34-3 3-3zm0 14.2c-2.5 0-4.71-1.28-6-3.22.03-1.99 4-3.08 6-3.08 1.99 0 5.97 1.09 6 3.08-1.29 1.94-3.5 3.22-6 3.22z"/>
+                    </svg>
+                </div>
+                <button class="logout-btn" id="logout-btn">Logout</button>
+            </div>
+        </div>
+        
+        <!-- Content -->
+        <div class="content">
+            <!-- Dashboard Page -->
+            <div id="dashboard" class="page-content active">
+                <h1 class="welcome">Welcome to your Dashboard!</h1>
+                <div class="card">
+                    <h2>Dashboard Overview</h2>
+                    <p>This is your main dashboard. Use the sidebar to navigate to different sections.</p>
+                </div>
+                <div class="card">
+                    <h2>Recent Activity</h2>
+                    <p>Your recent activities will appear here.</p>
+                </div>
+            </div>
+            
+            <!-- Employers Page -->
+            <div id="employers" class="page-content">
+                <h1 class="welcome">Employers</h1>
+                <div class="card">
+                    <h2>Employer Directory</h2>
+                    <p>Browse through our network of employers.</p>
+                    <div class="employer-list">
+                        <div class="employer-item">
+                            <h3>Tech Solutions Inc.</h3>
+                            <p>Technology sector</p>
+                        </div>
+                        <div class="employer-item">
+                            <h3>Global Innovations</h3>
+                            <p>Research and Development</p>
+                        </div>
+                        <div class="employer-item">
+                            <h3>Creative Media Group</h3>
+                            <p>Media and Entertainment</p>
+                        </div>
+                        <div class="employer-item">
+                            <h3>Finance Partners</h3>
+                            <p>Financial Services</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Products Page -->
+            <div id="products" class="page-content">
+                <h1 class="welcome">Products</h1>
+                <div class="card">
+                    <h2>Product Catalog</h2>
+                    <p>Explore our range of products and services.</p>
+                    <div class="product-list">
+                        <div class="product-item">
+                            <h3>Enterprise Solution</h3>
+                            <p>Complete business management platform</p>
+                        </div>
+                        <div class="product-item">
+                            <h3>Analytics Tool</h3>
+                            <p>Data visualization and insights</p>
+                        </div>
+                        <div class="product-item">
+                            <h3>Security Suite</h3>
+                            <p>Comprehensive security protection</p>
+                        </div>
+                        <div class="product-item">
+                            <h3>Mobile Application</h3>
+                            <p>Cross-platform mobile solutions</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Login Modal -->
+    <div id="login-modal" class="modal">
+        <div class="modal-content">
+            <span class="close">&times;</span>
+            <h2>Login</h2>
+            <div class="alert" id="login-alert"></div>
+            <form id="login-form">
+                <div class="form-group">
+                    <label for="email">Email or Phone</label>
+                    <input type="text" id="email" name="email" placeholder="Enter your email or phone number" required>
+                </div>
+                <div class="form-group">
+                    <label for="password">Password</label>
+                    <input type="password" id="password" name="password" placeholder="Enter your password" required>
+                </div>
+                <button type="submit" class="form-submit">Login</button>
+            </form>
+            <div class="form-toggle">
+                Don't have an account? <a href="#" id="show-register">Register here</a>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Registration Modal -->
+    <div id="register-modal" class="modal">
+        <div class="modal-content">
+            <span class="close">&times;</span>
+            <h2>Register</h2>
+            <div class="alert" id="register-alert"></div>
+            <form id="register-form">
+                <div class="form-group">
+                    <label for="lastname">Last Name</label>
+                    <input type="text" id="lastname" name="lastname" placeholder="Enter your last name" required>
+                </div>
+                <div class="form-group">
+                    <label for="firstname">First Name</label>
+                    <input type="text" id="firstname" name="firstname" placeholder="Enter your first name" required>
+                </div>
+                <div class="form-group">
+                    <label for="dob">Date of Birth</label>
+                    <input type="date" id="dob" name="dob" required>
+                </div>
+                <div class="form-group">
+                    <label for="register-email">Email or Facebook Number</label>
+                    <input type="text" id="register-email" name="register-email" placeholder="Enter your email or Facebook number" required>
+                </div>
+                <div class="form-group">
+                    <label for="register-password">Password</label>
+                    <input type="password" id="register-password" name="register-password" placeholder="Enter your password" required>
+                </div>
+                <div class="form-group">
+                    <label for="confirm-password">Confirm Password</label>
+                    <input type="password" id="confirm-password" name="confirm-password" placeholder="Confirm your password" required>
+                </div>
+                <button type="submit" class="form-submit">Register</button>
+            </form>
+            <div class="form-toggle">
+                Already have an account? <a href="#" id="show-login">Login here</a>
+            </div>
+        </div>
+    </div>
+    
+    <script src="Projet_dashboard.js"></script>
+</body>
+</html>

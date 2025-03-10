@@ -88,26 +88,48 @@
             <!-- Products Page -->
             <div id="products" class="page-content">
                 <h1 class="welcome">Products</h1>
+                
+                <!-- Add Product Form -->
+                <div class="card" id="add-product-card">
+                    <h2>Add New Product</h2>
+                    <form id="product-form">
+                        <div class="form-group">
+                            <label for="product-name">Product Name</label>
+                            <input type="text" id="product-name" name="product-name" placeholder="Enter product name" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="product-price">Price</label>
+                            <input type="number" id="product-price" name="product-price" min="0" step="0.01" placeholder="Enter price" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="product-category">Category</label>
+                            <select id="product-category" name="product-category" required>
+                                <option value="">Select a category</option>
+                                <option value="Technology">Technology</option>
+                                <option value="Software">Software</option>
+                                <option value="Hardware">Hardware</option>
+                                <option value="Service">Service</option>
+                                <option value="Other">Other</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="product-description">Description</label>
+                            <textarea id="product-description" name="product-description" placeholder="Enter product description" rows="4" required></textarea>
+                        </div>
+                        <div class="form-group">
+                            <label for="product-image">Product Image</label>
+                            <input type="file" id="product-image" name="product-image" accept="image/*">
+                        </div>
+                        <button type="submit" class="form-submit">Add Product</button>
+                    </form>
+                </div>
+                
+                <!-- Product List -->
                 <div class="card">
                     <h2>Product Catalog</h2>
                     <p>Explore our range of products and services.</p>
-                    <div class="product-list">
-                        <div class="product-item">
-                            <h3>Enterprise Solution</h3>
-                            <p>Complete business management platform</p>
-                        </div>
-                        <div class="product-item">
-                            <h3>Analytics Tool</h3>
-                            <p>Data visualization and insights</p>
-                        </div>
-                        <div class="product-item">
-                            <h3>Security Suite</h3>
-                            <p>Comprehensive security protection</p>
-                        </div>
-                        <div class="product-item">
-                            <h3>Mobile Application</h3>
-                            <p>Cross-platform mobile solutions</p>
-                        </div>
+                    <div id="products-list" class="products-grid">
+                        <!-- Products will be loaded dynamically -->
                     </div>
                 </div>
             </div>
@@ -173,6 +195,47 @@
             <div class="form-toggle">
                 Already have an account? <a href="#" id="show-login">Login here</a>
             </div>
+        </div>
+    </div>
+    
+    <!-- Edit Product Modal -->
+    <div id="edit-product-modal" class="modal">
+        <div class="modal-content">
+            <span class="close">&times;</span>
+            <h2>Edit Product</h2>
+            <div class="alert" id="edit-product-alert"></div>
+            <form id="edit-product-form">
+                <input type="hidden" id="edit-product-id">
+                <div class="form-group">
+                    <label for="edit-product-name">Product Name</label>
+                    <input type="text" id="edit-product-name" name="edit-product-name" placeholder="Enter product name" required>
+                </div>
+                <div class="form-group">
+                    <label for="edit-product-price">Price</label>
+                    <input type="number" id="edit-product-price" name="edit-product-price" min="0" step="0.01" placeholder="Enter price" required>
+                </div>
+                <div class="form-group">
+                    <label for="edit-product-category">Category</label>
+                    <select id="edit-product-category" name="edit-product-category" required>
+                        <option value="">Select a category</option>
+                        <option value="Technology">Technology</option>
+                        <option value="Software">Software</option>
+                        <option value="Hardware">Hardware</option>
+                        <option value="Service">Service</option>
+                        <option value="Other">Other</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="edit-product-description">Description</label>
+                    <textarea id="edit-product-description" name="edit-product-description" placeholder="Enter product description" rows="4" required></textarea>
+                </div>
+                <div class="form-group">
+                    <label for="edit-product-image">Product Image</label>
+                    <input type="file" id="edit-product-image" name="edit-product-image" accept="image/*">
+                    <div id="current-product-image-container" class="preview-image"></div>
+                </div>
+                <button type="submit" class="form-submit">Update Product</button>
+            </form>
         </div>
     </div>
     

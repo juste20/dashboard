@@ -18,6 +18,13 @@ document.addEventListener('DOMContentLoaded', function() {
     const loginAlert = document.getElementById('login-alert');
     const registerAlert = document.getElementById('register-alert');
 
+    // Product Management DOM Elements
+    const productForm = document.getElementById('product-form');
+    const productsList = document.getElementById('products-list');
+    const editProductModal = document.getElementById('edit-product-modal');
+    const editProductForm = document.getElementById('edit-product-form');
+    const editProductAlert = document.getElementById('edit-product-alert');
+
     // Check if user is logged in
     checkLoginStatus();
 
@@ -35,6 +42,11 @@ document.addEventListener('DOMContentLoaded', function() {
             // Show the corresponding page
             const pageId = this.getAttribute('data-page');
             document.getElementById(pageId).classList.add('active');
+            
+            // If we're navigating to the products page, load the products
+            if (pageId === 'products') {
+                loadProducts();
+            }
         });
     });
 
@@ -57,6 +69,9 @@ document.addEventListener('DOMContentLoaded', function() {
         btn.addEventListener('click', function() {
             loginModal.style.display = 'none';
             registerModal.style.display = 'none';
+            if (editProductModal) {
+                editProductModal.style.display = 'none';
+            }
         });
     });
 
@@ -180,6 +195,9 @@ document.addEventListener('DOMContentLoaded', function() {
         if (e.target == registerModal) {
             registerModal.style.display = 'none';
         }
+        if (e.target == editProductModal) {
+            editProductModal.style.display = 'none';
+        }
     });
 
     // Function to check login status on page load
@@ -196,5 +214,261 @@ document.addEventListener('DOMContentLoaded', function() {
         authButtons.style.display = 'none';
         userInfo.style.display = 'flex';
         userName.textContent = user.firstname + ' ' + user.lastname;
+    }
+
+    // PRODUCT MANAGEMENT FUNCTIONS
+
+    // Add Product Form Submission
+    if (productForm) {
+        productForm.addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            // Check if user is logged in
+            const currentUser = JSON.parse(localStorage.getItem('currentUser'));
+            if (!currentUser) {
+                alert('Please login to add products');
+                return;
+            }
+            
+            const productName = document.getElementById('product-name').value;
+            const productPrice = parseFloat(document.getElementById('product-price').value);
+            const productCategory = document.getElementById('product-category').value;
+            const productDescription = document.getElementById('product-description').value;
+            
+            // Handle image file
+            let productImageURL = '';
+            const productImageInput = document.getElementById('product-image');
+            if (productImageInput.files.length > 0) {
+                const file = productImageInput.files[0];
+                // For simplicity, we'll just store a fake URL
+                // In a real application, you'd upload this to a server
+                productImageURL = URL.createObjectURL(file);
+            }
+            
+            // Create product object
+            const product = {
+                id: Date.now().toString(),
+                name: productName,
+                price: productPrice,
+                category: productCategory,
+                description: productDescription,
+                image: productImageURL,
+                createdBy: currentUser.email || currentUser.facebook,
+                createdAt: new Date().toISOString()
+            };
+            
+            // Get existing products
+            const products = JSON.parse(localStorage.getItem('products')) || [];
+            
+            // Add new product
+            products.push(product);
+            
+            // Save to local storage
+            localStorage.setItem('products', JSON.stringify(products));
+            
+            // Reset form
+            productForm.reset();
+            
+            // Reload products list
+            loadProducts();
+            
+            // Show success message
+            alert('Product added successfully!');
+        });
+    }
+
+    // Function to load products
+    function loadProducts() {
+        if (!productsList) return;
+        
+        // Clear products list
+        productsList.innerHTML = '';
+        
+        // Get products from local storage
+        const products = JSON.parse(localStorage.getItem('products')) || [];
+        const currentUser = JSON.parse(localStorage.getItem('currentUser'));
+        
+        // If no products, show message
+        if (products.length === 0) {
+            productsList.innerHTML = '<p class="no-products">No products available. Add your first product!</p>';
+            return;
+        }
+        
+        // Loop through products and create elements
+        products.forEach(product => {
+            const productCard = document.createElement('div');
+            productCard.className = 'product-card';
+            
+            // Set product card HTML
+            productCard.innerHTML = `
+                <div class="product-image">
+                    ${product.image ? `<img src="${product.image}" alt="${product.name}">` : '<div class="no-image">No Image</div>'}
+                </div>
+                <div class="product-info">
+                    <h3>${product.name}</h3>
+                    <p class="product-category">${product.category}</p>
+                    <p class="product-price">$${product.price.toFixed(2)}</p>
+                    <p class="product-description">${product.description}</p>
+                    <div class="product-actions">
+                        <button class="view-product" data-id="${product.id}">View Details</button>
+                        ${currentUser && (currentUser.email === product.createdBy || currentUser.facebook === product.createdBy) ? 
+                            `<button class="edit-product" data-id="${product.id}">Edit</button>
+                             <button class="delete-product" data-id="${product.id}">Delete</button>` : ''}
+                    </div>
+                </div>
+            `;
+            
+            productsList.appendChild(productCard);
+        });
+        
+        // Add event listeners to buttons
+        addProductButtonListeners();
+    }
+
+    // Function to add event listeners to product buttons
+    function addProductButtonListeners() {
+        // View product details
+        const viewButtons = document.querySelectorAll('.view-product');
+        viewButtons.forEach(button => {
+            button.addEventListener('click', function() {
+                const productId = this.getAttribute('data-id');
+                viewProductDetails(productId);
+            });
+        });
+        
+        // Edit product
+        const editButtons = document.querySelectorAll('.edit-product');
+        editButtons.forEach(button => {
+            button.addEventListener('click', function() {
+                const productId = this.getAttribute('data-id');
+                openEditProductModal(productId);
+            });
+        });
+        
+        // Delete product
+        const deleteButtons = document.querySelectorAll('.delete-product');
+        deleteButtons.forEach(button => {
+            button.addEventListener('click', function() {
+                const productId = this.getAttribute('data-id');
+                deleteProduct(productId);
+            });
+        });
+    }
+
+    // Function to view product details
+    function viewProductDetails(productId) {
+        const products = JSON.parse(localStorage.getItem('products')) || [];
+        const product = products.find(p => p.id === productId);
+        
+        if (product) {
+            // In a real app, you might show a modal with details
+            alert(`
+                Product: ${product.name}
+                Category: ${product.category}
+                Price: $${product.price.toFixed(2)}
+                Description: ${product.description}
+                Added on: ${new Date(product.createdAt).toLocaleDateString()}
+            `);
+        }
+    }
+
+    // Function to open edit product modal
+    function openEditProductModal(productId) {
+        const products = JSON.parse(localStorage.getItem('products')) || [];
+        const product = products.find(p => p.id === productId);
+        
+        if (product && editProductModal && editProductForm) {
+            // Fill form with product data
+            document.getElementById('edit-product-id').value = product.id;
+            document.getElementById('edit-product-name').value = product.name;
+            document.getElementById('edit-product-price').value = product.price;
+            document.getElementById('edit-product-category').value = product.category;
+            document.getElementById('edit-product-description').value = product.description;
+            
+            // Show current image if exists
+            const currentImageContainer = document.getElementById('current-product-image-container');
+            if (currentImageContainer) {
+                if (product.image) {
+                    currentImageContainer.innerHTML = `<img src="${product.image}" alt="${product.name}" style="max-width: 100px; max-height: 100px;">`;
+                } else {
+                    currentImageContainer.innerHTML = '';
+                }
+            }
+            
+            // Show modal
+            editProductModal.style.display = 'flex';
+        }
+    }
+
+    // Edit Product Form Submission
+    if (editProductForm) {
+        editProductForm.addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const productId = document.getElementById('edit-product-id').value;
+            const productName = document.getElementById('edit-product-name').value;
+            const productPrice = parseFloat(document.getElementById('edit-product-price').value);
+            const productCategory = document.getElementById('edit-product-category').value;
+            const productDescription = document.getElementById('edit-product-description').value;
+            
+            // Get products from local storage
+            const products = JSON.parse(localStorage.getItem('products')) || [];
+            const productIndex = products.findIndex(p => p.id === productId);
+            
+            if (productIndex !== -1) {
+                // Check if there's a new image
+                let productImageURL = products[productIndex].image; // Keep existing image by default
+                const productImageInput = document.getElementById('edit-product-image');
+                if (productImageInput.files.length > 0) {
+                    const file = productImageInput.files[0];
+                    productImageURL = URL.createObjectURL(file);
+                }
+                
+                // Update product
+                products[productIndex] = {
+                    ...products[productIndex],
+                    name: productName,
+                    price: productPrice,
+                    category: productCategory,
+                    description: productDescription,
+                    image: productImageURL,
+                    updatedAt: new Date().toISOString()
+                };
+                
+                // Save to local storage
+                localStorage.setItem('products', JSON.stringify(products));
+                
+                // Close modal
+                editProductModal.style.display = 'none';
+                
+                // Reload products
+                loadProducts();
+                
+                // Show success message
+                alert('Product updated successfully!');
+            }
+        });
+    }
+
+    // Function to delete product
+    function deleteProduct(productId) {
+        if (confirm('Are you sure you want to delete this product?')) {
+            const products = JSON.parse(localStorage.getItem('products')) || [];
+            const updatedProducts = products.filter(p => p.id !== productId);
+            
+            // Save updated products to local storage
+            localStorage.setItem('products', JSON.stringify(updatedProducts));
+            
+            // Reload products
+            loadProducts();
+            
+            // Show success message
+            alert('Product deleted successfully!');
+        }
+    }
+
+    // Initial load of products if on products page
+    if (document.getElementById('products') && document.getElementById('products').classList.contains('active')) {
+        loadProducts();
     }
 });
